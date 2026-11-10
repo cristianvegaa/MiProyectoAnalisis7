@@ -1,0 +1,26 @@
+# Entornos y archivos temporales
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.DS_Store
+Thumbs.db
+
+# Secretos y credenciales
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials.json
+
+# Datos originales: conservar localmente, no subir datos pesados o sensibles
+data/raw/*
+!data/raw/README.md
+!data/raw/.gitkeep
+
+# Resultados generados (se pueden regenerar ejecutando el análisis)
+data/processed/*
+!data/processed/README.md
+!data/processed/.gitkeep
