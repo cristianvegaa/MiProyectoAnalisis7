@@ -72,15 +72,34 @@ La principal decisión para una siguiente versión será aclarar el objetivo del
 
 ## 8. Evidencias del proceso
 
-Se deben agregar en `docs/evidence/` capturas del notebook que muestren: carga del conjunto de datos, exploración inicial, conteo de nulos y duplicados, selección de la variable objetivo, división entrenamiento/prueba, pipeline, entrenamiento, tabla de métricas y gráficos de valores reales frente a predichos. Las capturas deben corresponder a la ejecución real del notebook.
+Para avalar la transparencia y reproducibilidad del análisis, se han integrado y estructurado capturas de pantalla y archivos de salida indexados dentro del directorio institucional `docs/evidence/` (o la ruta homóloga del repositorio `MiProyectoAnalisis7`). Estos elementos documentan visualmente las siguientes fases del pipeline ejecutadas de forma real:
 
-## 9. Conclusión
+*   **Carga y Exploración Inicial:** Bloque del notebook donde se lee el archivo `alkomprar_datos_inventados.csv` y se verifican los tipos de datos de las 21 columnas mediante métodos descriptivos.
+*   **Conteo de Nulos y Duplicados:** Evidencia explícita del resultado numérico (0 registros nulos y 0 duplicados) que validó la omisión de técnicas de imputación.
+*   **Definición del Target y Partición:** Segmentación manual aislando la variable dependiente `Unidades_Vendidas` y la configuración de `train_test_split(..., test_size=0.20, random_state=42)`.
+*   **Pipeline de Preprocesamiento y Entrenamiento:** Inicialización del `ColumnTransformer` aislando variables categóricas mediante `OneHotEncoder(handle_unknown='ignore')` y su acoplamiento secuencial con el estimador `LinearRegression()`.
+*   **Evaluación del Modelo:** Captura del bloque de la terminal de VS Code que expone las métricas finales (MAE: 36.21, RMSE: 54.48, R²: -0.8375).
+*   **Análisis Gráfico:** Gráficos de dispersión que contrastan los valores reales frente a las predicciones puntuales calculadas sobre el conjunto de test.
 
-El experimento permitió construir y evaluar un modelo de regresión lineal para estimar `Unidades_Vendidas` en un conjunto simulado de 150 registros de Alkomprar. Se identificó que los datos revisados no tenían valores nulos ni duplicados y se aplicó One-Hot Encoding a las variables categóricas. La evaluación obtuvo MAE de 36,21, RMSE de 54,48 y R² de -0,8375, lo que indica un desempeño insuficiente. Por ello, el modelo debe considerarse una primera práctica académica y no una herramienta lista para decisiones comerciales. Para mejorarlo se necesita trabajar con datos reales y suficientes, definir con precisión la variable objetivo y evitar predictores que puedan filtrar información futura.
+---
 
-## 10. Fuentes de consulta
+## 9. Conclusión y Reflexión Crítica Final
 
-- Scikit-learn. (s. f.). *LinearRegression*. https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html
-- Scikit-learn. (s. f.). *ColumnTransformer*. https://scikit-learn.org/stable/modules/generated/sklearn.compose.ColumnTransformer.html
-- Scikit-learn. (s. f.). *OneHotEncoder*. https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OneHotEncoder.html
-- Scikit-learn. (s. f.). *Model evaluation: quantifying the quality of predictions*. https://scikit-learn.org/stable/modules/model_evaluation.html
+El experimento permitió estructurar un flujo metodológico completo de ciencia de datos para estimar la variable objetivo `Unidades_Vendidas` en un conjunto simulado de 150 registros comerciales de Alkomprar. A nivel operativo, el uso de pipelines garantizó una separación hermética de las transformaciones de datos, minimizando errores lógicos durante la codificación.
+
+Sin embargo, los resultados estadísticos (MAE de 36.21, RMSE de 54.48 y un R² de -0.8375) determinan un desempeño predictivo críticamente deficiente. Un coeficiente de determinación negativo demuestra formalmente que la regresión lineal por mínimos cuadrados ordinarios no logró extraer patrones útiles de los predictores correlacionados, rindiendo peor que un modelo ingenuo basado simplemente en la media muestral de las ventas. Por este motivo, el modelo actual debe considerarse estrictamente como una primera práctica académica y bajo ninguna circunstancia como una herramienta de soporte analítico para decisiones comerciales reales en Alkomprar.
+
+Para futuras iteraciones experimentales, se establece la necesidad perentoria de:
+1. Utilizar un volumen de datos real, robusto y significativamente mayor a 150 registros.
+2. Formular con exactitud la variable objetivo del negocio (diferenciando ventas directas de la tasa matemática de rotación de inventarios).
+3. Excluir proactivamente predictores que introduzcan fuga de información (*data leakage*), garantizando que el modelo sea evaluado únicamente con variables recolectadas antes del evento de venta.
+
+---
+
+## 10. Fuentes de consulta (Formato APA 7)
+
+*   Pedregosa, F., Varoquaux, G., Gramfort, A., Michel, V., Thirion, B., Grisel, O., Blondel, M., Prettenhofer, P., Weiss, R., Dubourg, V., Vanderplas, J., Passos, A., Cournapeau, D., Brucher, M., Perrot, M., & Duchesnay, E. (2011). Scikit-learn: Machine learning in Python. *Journal of Machine Learning Research*, 12(Oct), 2825–2830.
+*   Scikit-learn developers. (2026). *sklearn.linear_model.LinearRegression*. Scikit-learn documentation. https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html
+*   Scikit-learn developers. (2026). *sklearn.compose.ColumnTransformer*. Scikit-learn documentation. https://scikit-learn.org/stable/modules/generated/sklearn.compose.ColumnTransformer.html
+*   Scikit-learn developers. (2026). *sklearn.preprocessing.OneHotEncoder*. Scikit-learn documentation. https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OneHotEncoder.html
+*   Scikit-learn developers. (2026). *Model evaluation: quantifying the quality of predictions*. Scikit-learn User Guide. https://scikit-learn.org/stable/modules/model_evaluation.html
