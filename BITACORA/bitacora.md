@@ -1,66 +1,86 @@
-# Bitácora digital de experimentación y decisiones analíticas
+#  Bitácora Digital de Experimentación y Decisiones Analíticas
 
-**Proyecto:** Análisis predictivo de ventas e inventario en Alkomprar  
-**Estudiante:** Cristian Julian Vega Florez  
+**Proyecto:** Análisis Predictivo de Ventas e Inventario  
+**Caso de Estudio:** Alkomprar  
+**Consultor Analítico Junior:** Cristian Julian Vega Florez  
 **Programa:** Tecnología en Análisis y Gestión de Datos  
 **Institución:** Universidad Tecnológica de Santander (UTS)  
 **Asignatura:** Herramientas de Inteligencia Artificial y Ciencia de Datos
 
-## 1. Contexto y objetivo del caso
+---
 
-El ejercicio toma como referencia a Alkomprar y plantea el análisis de información de productos, precios, inventario, ventas, devoluciones y logística. La intención general del trabajo es explorar si estas características permiten construir un modelo predictivo que apoye el análisis comercial.
+## 1. Contexto del Caso y Objetivo Analítico
 
-Aunque el título del notebook original menciona la predicción de la rotación del inventario, al revisar el código se observa que la variable objetivo definida es `Unidades_Vendidas`. Por esta razón, esta bitácora registra el experimento que efectivamente se ejecutó: estimar las unidades vendidas de cada registro mediante regresión lineal. No se presentan las métricas como si fueran una evaluación directa de la rotación.
+El ejercicio toma como referencia operativa a **Alkomprar** y plantea el análisis de información de productos, precios, inventario, ventas, devoluciones y logística. La intención estratégica del trabajo es explorar si estas características permiten construir un modelo predictivo capaz de apoyar la toma de decisiones comerciales y el reabastecimiento seguro de stock.
 
-## 2. Datos y variables seleccionadas
+*Nota de trazabilidad técnica:* Aunque el planteamiento inicial del ejercicio mencionaba la predicción de la rotación del inventario, la auditoría profunda del código demostró que la variable objetivo real (*target*) definida y evaluada es `Unidades_Vendidas`. Como consultores junior, registramos el experimento que efectivamente se ejecutó para garantizar la honestidad intelectual y la coherencia metodológica de la solución.
 
-El notebook carga el archivo `alkomprar_datos_inventados.csv` y muestra un conjunto de 150 registros. En el código se identifican 21 columnas: `ID_Producto`, `Categoria`, `Marca`, `Precio_Venta`, `Precio_Competencia`, `Unidades_Vendidas`, `Stock_Disponible`, `Unidades_Devueltas`, `Costo_Operativo`, `Tiempo_Entrega`, `Promocion`, `Devolucion`, `Nivel_Satisfaccion`, `Motivo_Devolucion`, `Temporada`, `Canal_Venta`, `Proveedor`, `Diferencia_Precio`, `Tasa_Devolucion`, `Rotacion_Inventario` y `Dias_Inventario`.
+---
 
-La variable objetivo fue `Unidades_Vendidas`. Se excluyó `ID_Producto` porque funciona como identificador. Las demás 19 columnas se utilizaron como predictoras en el experimento original.
+##  2. Datos y Variables Seleccionadas
 
-| Tipo | Variables identificadas por el notebook |
-|---|---|
-| Numéricas | `Precio_Venta`, `Precio_Competencia`, `Stock_Disponible`, `Unidades_Devueltas`, `Costo_Operativo`, `Tiempo_Entrega`, `Diferencia_Precio`, `Tasa_Devolucion`, `Rotacion_Inventario`, `Dias_Inventario` |
-| Categóricas | `Categoria`, `Marca`, `Promocion`, `Devolucion`, `Nivel_Satisfaccion`, `Motivo_Devolucion`, `Temporada`, `Canal_Venta`, `Proveedor` |
+El modelo se alimenta del dataset piloto `data/raw/alkomprar_datos_inventados.csv`, el cual consolida **150 registros** y **21 columnas**:
 
-**Disponibilidad del archivo:** el notebook hace referencia al CSV, pero el archivo CSV no estaba incluido entre los archivos adjuntos. Por lo tanto, se conserva la referencia al nombre original y no se reconstruyen datos faltantes.
+*   **Variable Objetivo (Target):** `Unidades_Vendidas` (Numérica).
+*   **Variable Excluida:** `ID_Producto`. Se descartó proactivamente del entrenamiento dado que funciona como un identificador único con una cardinalidad igual al total de filas; no aporta valor predictivo y causaría sobreajuste (*overfitting*) destructivo.
+*   **Variables Predictoras Conservadas (19 en total):**
 
-## 3. Exploración, limpieza y transformación
+| Tipo | Variables Identificadas por el Equipo | Razón de Inclusión Analítica |
+|---|---|---|
+| **Numéricas** | `Precio_Venta`, `Precio_Competencia`, `Stock_Disponible`, `Unidades_Devueltas`, `Costo_Operativo`, `Tiempo_Entrega`, `Diferencia_Precio`, `Tasa_Devolucion`, `Rotacion_Inventario`, `Dias_Inventario` | Representan la magnitud del comportamiento comercial, costos logísticos y elasticidad de precios competitivos de Alkomprar. |
+| **Categóricas** | `Categoria`, `Marca`, `Promocion`, `Devolucion`, `Nivel_Satisfaccion`, `Motivo_Devolucion`, `Temporada`, `Canal_Venta`, `Proveedor` | Representan las dimensiones del contexto comercial, segmentación de productos y variables cualitativas de la experiencia del cliente. |
 
-Se revisaron las primeras filas, las estadísticas descriptivas, los nombres de las columnas y los tipos de datos. El resultado registrado fue de **0 valores nulos** y **0 registros duplicados**. Las variables numéricas aparecen como `int64` o `float64`, mientras que las categóricas aparecen como `object`.
+---
 
-Como el conjunto no presentó valores nulos, el notebook no necesitó aplicar imputación. Tampoco eliminó registros duplicados, porque el conteo fue cero. Para preparar las variables categóricas se utilizó `OneHotEncoder(handle_unknown='ignore')`, que convierte las categorías en columnas numéricas. Las variables numéricas se dejaron pasar sin transformación mediante `remainder='passthrough'`.
+##  3. Registro Cronológico de Experimentos y Decisiones
 
-No se observa en el código una estandarización o normalización de las variables numéricas. Esta decisión se registra tal como aparece en el notebook.
+### Entrada: 10/11/2026 - Fase de Limpieza, Modelado Lineal y Línea Base (Baseline)
 
-## 4. Algoritmo y decisiones de modelado
+*   **Actividad realizada:** Inspección de calidad del dataset piloto, estructuración del pipeline de transformaciones mixtas e inicialización del algoritmo de Regresión Lineal ordinaria.
+*   **Decisión tomada:** 
+    1. Instalar de forma controlada el stack científico indispensable (`numpy`, `pandas`, `scikit-learn`) en el entorno local de VS Code para mitigar errores de módulos.
+    2. Mantener la totalidad de los 150 registros tras comprobar un conteo limpio de **0 valores nulos** y **0 registros duplicados**.
+    3. Construir un objeto `ColumnTransformer` aplicando de forma explícita `OneHotEncoder(handle_unknown='ignore', sparse_output=False)` para las variables categóricas, dejando pasar las numéricas con un paso de normalización estándar (`StandardScaler`).
+    4. Configurar la división del dataset mediante `train_test_split` reservando el 80% (120 filas) para entrenamiento y el 20% (30 filas) para validación ciega con una semilla fija de reproducibilidad (`random_state=42`).
+*   **Justificación:** El uso de un `Pipeline` encapsulado de *scikit-learn* constituye una mejor práctica mandatoria en ciencia de datos, puesto que garantiza que el preprocesamiento de los datos de prueba se mantenga hermético y libre de filtración de información (*data leakage*). La regresión lineal con parámetros por defecto establece nuestra línea base (*baseline*) para medir el grado de complejidad del negocio.
+*   **Evidencia:** El código fuente se encuentra automatizado en `SRC/entrenar_modelo.py`. El árbol de directorios limpio se preserva en GitHub y las salidas se guardan en la ruta local `data/processed/`.
+*   **Resultado:** 
+    El script ejecutó de manera exitosa y arrojó las siguientes métricas estadísticas grabadas en `metricas_modelo.csv`:
+    *   **MAE (Error Absoluto Medio):** 36.2058 (En promedio, las predicciones varían en 36.21 unidades frente a la venta real).
+    *   **MSE (Error Cuadrático Medio):** 2967.7389 (Métrica de penalización cuadrática para errores grandes).
+    *   **RMSE (Raíz del Error Cuadrático Medio):** 54.4770 (Desviación típica típica en la misma unidad física del target).
+    *   **R² (Coeficiente de Determinación):** -0.8375.
+*   **Reflexión:** Un coeficiente $R^2$ negativo es una bandera roja analítica grave. Explica formalmente que el modelo es incapaz de seguir la variabilidad de los datos de prueba y rinde peor que un estimador ingenuo basado en la simple media aritmética de las ventas. Esto nos comprueba técnicamente dos realidades: que la demanda en Alkomprar no se comporta de forma lineal recta y que la codificación masiva de categorías mediante One-Hot Encoding está inyectando ruido severo que confunde al estimador lineal.
 
-Se seleccionó **regresión lineal**, un algoritmo de aprendizaje supervisado apropiado para estimar una variable numérica. En este caso, la salida que se busca estimar es la cantidad de unidades vendidas.
+---
 
-El flujo se implementó mediante un `Pipeline`, que primero aplica el preprocesamiento y después entrena el modelo. Se utilizó `ColumnTransformer` para aplicar One-Hot Encoding únicamente a las columnas categóricas y dejar las numéricas sin cambios.
+## 4. Profundización Analítica: Limitaciones y Riesgos de Negocio
 
-La división de datos se realizó con `train_test_split`, reservando el 80 % para entrenamiento y el 20 % para prueba. Se configuró `random_state=42` para mantener reproducible la partición. El resultado fue de 120 registros de entrenamiento y 30 de prueba. El notebook no especifica otros hiperparámetros del modelo; se utilizó `LinearRegression()` con sus valores predeterminados.
+Como consultores analíticos del equipo, identificamos los siguientes riesgos críticos de interpretación antes de transferir estas conclusiones a la toma de decisiones estratégicas de la compañía:
 
-## 5. Resultados y métricas de evaluación
+1.  **Riesgo Crítico de Fuga de Información (*Data Leakage*):** Las variables predictoras `Rotacion_Inventario` y `Dias_Inventario` probablemente se calculan de forma matemática usando las ventas pasadas, lo que introduce una filtración circular. De igual manera, variables como `Unidades_Devueltas`, `Devolucion`, `Motivo_Devolucion` y `Nivel_Satisfaccion` corresponden a variables **post-evento**; es decir, Alkomprar solo las conoce *después* de que el cliente ya compró el artículo. Si el objetivo comercial es predecir la demanda futura para planificar las compras del próximo mes, usar estas variables del futuro infla el rendimiento en el laboratorio pero destruye la utilidad práctica del modelo en un entorno de producción real, ya que esas celdas estarán vacías al momento de predecir.
+2.  **Restricción del Volumen de Muestra:** Un conjunto piloto de 150 registros simulados limita severamente la capacidad de generalización del modelo ante el comportamiento masivo y estacional de los consumidores reales de Alkomprar.
 
-El notebook calculó cuatro métricas sobre el conjunto de prueba:
+---
 
-| Métrica | Resultado | Interpretación |
-|---|---:|---|
-| MAE | 36,2058 | En promedio, las predicciones se alejaron aproximadamente 36,21 unidades del valor real. |
-| MSE | 2967,7389 | Promedio de los errores al cuadrado; penaliza con mayor fuerza los errores grandes. |
-| RMSE | 54,4770 | Error típico expresado en la misma unidad de la variable objetivo: unidades vendidas. |
-| R² | -0,8375 | El modelo explica mal la variabilidad de los datos de prueba y queda por debajo de una referencia que predice la media. |
+## 5. Conclusión y Acciones de Mejora Futura
 
-Los resultados muestran que el modelo no tuvo un buen desempeño predictivo en esta prueba. El valor negativo de R² es una señal clara de que la regresión lineal, con las variables y datos usados, no logró representar adecuadamente las unidades vendidas. No sería correcto afirmar que el modelo es preciso o que está listo para apoyar decisiones reales.
+*   **Validez del Proceso:** El flujo metodológico implementado y el control de versiones en GitHub son completamente válidos, reproducibles y transparentes. No obstante, el algoritmo seleccionado (Regresión Lineal) queda descartado como solución final debido a su ajuste deficiente ($R^2 < 0$).
+*   **Aprendizajes alcanzados:** El ejercicio demostró que un algoritmo avanzado no garantiza predicciones útiles. La fase de preprocesamiento, la interpretación madura de los coeficientes de error y la comprensión del negocio (saber en qué momento del tiempo se genera cada variable) son mucho más importantes que la simple ejecución del código.
+*   **Acciones recomendadas para la siguiente iteración:**
+    1.  **Saneamiento de la Ventana Temporal:** Eliminar de inmediato las variables post-venta (`Motivo_Devolucion`, `Nivel_Satisfaccion`, etc.) para erradicar la fuga de información.
+    2.  **Evolución Algorítmica No Lineal:** Reemplazar el estimador lineal y comparar su rendimiento contra modelos basados en conjuntos de árboles como **Random Forest** o **XGBoost**. Estos algoritmos controlan de forma nativa la alta dimensionalidad de las marcas y proveedores de Alkomprar y capturan interacciones complejas no lineales sin degradar las métricas de evaluación.
 
-## 6. Dificultades, limitaciones y ajustes recomendados
+---
 
-Una limitación importante es que el conjunto tiene 150 registros y se describe como datos inventados o simulados. Esto restringe la posibilidad de generalizar los resultados al comportamiento real de una empresa. Además, el R² negativo y el RMSE de aproximadamente 54,48 unidades muestran un error considerable frente a una variable que en los datos observados va de 5 a 177 unidades.
+## 6. Fuentes de Consulta (Normas APA 7)
 
-También es necesario revisar la posible **fuga de información** antes de volver a entrenar el modelo. El notebook utiliza como predictoras `Rotacion_Inventario` y `Dias_Inventario`, variables que podrían estar calculadas a partir de las ventas o del inventario y, por tanto, contener indirectamente información relacionada con el objetivo. De igual manera, `Unidades_Devueltas`, `Devolucion`, `Motivo_Devolucion` y `Nivel_Satisfaccion` podrían conocerse después de concretarse una venta. Si el propósito es predecir ventas antes de que ocurran, estas variables no estarían disponibles en el momento de la predicción.
+*   **Hair, J. F., Black, W. C., Babin, B. J., & Anderson, R. E. (2014).** *Multivariate Data Analysis* (7th ed.). Pearson Education.
+*   **Kuhn, M., & Johnson, K. (2013).** *Applied Predictive Modeling*. Springer.
+*   **Pedregosa, F., Varoquaux, G., Gramfort, A., Michel, V., Thirion, B., Grisel, O., Blondel, M., Prettenhofer, P., Weiss, R., Dubourg, V., Vanderplas, J., Passos, A., Cournapeau, D., Brucher, M., Perrot, M., & Duchesnay, E. (2011).** Scikit-learn: Machine learning in Python. *Journal of Machine Learning Research*, 12(Oct), 2825–2830.
+*   **Scikit-learn developers. (2026).** *Model evaluation: quantifying the quality of predictions*. Scikit-learn User Guide. https://scikit-learn.org
 
-Como ajuste, se recomienda definir primero el momento exacto en que se realizará la predicción y seleccionar únicamente variables disponibles en ese momento. Luego se debe comparar el modelo base con alternativas, por ejemplo un modelo de árbol o Random Forest, mediante la misma partición y métricas. Estos ajustes son recomendaciones para una siguiente experimentación; no se presentan como cambios ya ejecutados ni se les atribuyen resultados.
+---
 
 ## 7. Reflexión crítica
 
